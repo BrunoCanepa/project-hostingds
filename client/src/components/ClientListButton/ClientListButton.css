@@ -1,0 +1,12 @@
+.client-list-button {
+    height: 10rem;
+
+    border-radius: 10px;
+    background-color: #f37a2e;
+}
+
+.button {
+    width: 100%;
+    height: 100%;
+
+}

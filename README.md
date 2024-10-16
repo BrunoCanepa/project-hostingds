@@ -1,93 +1,155 @@
-# Project-HostingDelSur
+### Docker Compose for a Full-Stack Application with React, Node.js, and PostgreSQL
 
+This repository demonstrates how to set up a React JS, Node JS server with a PostgreSQL database server inside docker containers and connect them all together
 
+#### TL;DR
 
-## Getting started
+To get this project up and running, follow these steps
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Make sure you have Docker installed in your system. For installation steps, follow the following steps:
+    1. For **[Mac](https://docs.docker.com/desktop/install/mac-install/)**
+    2. For **[Ubuntu](https://docs.docker.com/engine/install/ubuntu/)**
+    3. For **[Windows](https://docs.docker.com/desktop/install/linux-install/)**
+2. Clone the repository into your device
+3. Open a terminal from the cloned project's directory (Where the `docker-compose.yml` file is present)
+4. Run the command: `docker compose up`
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+That's all! That should get the project up and running. To see the output, you can access `http://127.0.0.1:4172` from the browser and you should find a web page with a list of users. This entire system with the client, server & database are running inside of docker and being accessible from your machine.
 
-## Add your files
+Here is a detailed explanation on what is going on.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+#### **1. Introduction**
 
+[Docker](https://docs.docker.com/) at its core is a platform as a service that uses OS-level virtualization to deploy/deliver software in packages called containers. It is done for various advantages, such as cross platform consistency and flexibility and scalability.
+
+[Docker Compose](https://docs.docker.com/compose/) is a tool for defining and running multi-container applications. It is the key to unlocking a streamlined and efficient development and deployment experience.
+
+#### **2. Using Docker and Docker Compose**
+
+When it comes to working with Full Stack Applications, i.e. ones that will involve more than one set of technology to integrate it into one fully fledged system, Docker can be fairly overwhelming to configure from scratch. It is not made any easier by the fact that there are various types of environment dependencies for each particular technology, and it only leads to the risk of errors at a deployment level.
+
+**Note:** The `.env` file adjacent in the directory with `docker-compose.yml` will contain certain variables that will be used in the docker compose file. They will be accessed whenever the `${<VARIABLE_NAME>}` notation is used.
+
+This example will work with PostgreSQL as the database, a very minimal Node/Express JS server and React JS as the client side application.
+
+#### **3. Individual Containers**
+
+The following section goes into a breakdown of how the `docker-compose.yml` file works with the individual `Dockerfile`. Let's take a look at the docker-compose file first. We have a key called `services` at the very top, which defines the different applications/services we want to get running. As this is a `.yml` file, it is important to remember that indentations are crucial. Lets dive into the first service defined in this docker compose file, the database.
+
+##### **1. Database**
+First of all, the database needs to be set up and running in order for the server to be able to connect to it. The database does not need any Dockerfile in this particular instance, however, it can be done with a Dockerfile too. Lets go through the configurations.
+
+*`docker-compose.yml`*
+```yml
+postgres:
+    container_name: database
+    ports:
+        - "5431:5432"
+    image: postgres
+        environment:
+            POSTGRES_USER: "${POSTGRES_USER}"
+            POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            - ./docker_test_db:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+            interval: 5s
+            timeout: 60s
+            retries: 5
+            start_period: 80s
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/proyectos2634841/Project-HostingDelSur.git
-git branch -M main
-git push -uf origin main
+#### Explanation
+- ***postgres***: used to identify the service that the section of the compose file is for
+- ***container_name***: the name of the service/container that we have chosen
+- ***ports***: maps the host port (making it accessible from outside) to the port being used by the application in Docker.
+- ***image***: defines the Docker image that will be required to make this container functional and running
+- ***environment***: defined variables for the environment of this particular service. For example, for this PostgreSQL service, we will be defining a `POSTGRES_USER`,`POSTGRES_PASSWORD` and `POSTGRES_DB`. They're all being assigned with the values in the `.env`.
+- ***volumes***: This particular key is for we want to create a container that can **_persist_** data. This means that ordinarily, when a Docker container goes down, so does any updated data on it. Using volumes, we are mapping a particular directory of our local machine with a directory of the container. In this case, that's the directory where postgres is reading the data from for this database.
+- ***heathcheck***: when required, certain services will need to check if their state is functional or not. For example, PostgreSQL, has a behavior of turning itself on and off a few instances at launch, before finally being functional. For this reason, healthcheck allows Docker Compose to allow other services to know when it is fully functional.
+    The few properties below healthcheck are doing the following:
+    - ***test***: runs particular commands for the service to run checks
+    - ***interval***: amount of time docker compose will wait before running a check again
+    - ***timeout***: amount of time that the a single check will go on for, before it times out without any response or fails
+    - ***retries***: total number of tries that docker compose will try to get the healthcheck for a positive response, otherwise fail and declare it as a failed check
+    - ***start_period***: specifies the amount of time to wait before starting health checks
+
+##### **2. Server**
+
+*`Dockerfile`*
+```Dockerfile
+FROM node:18
+WORKDIR /server
+COPY src/ /server/src
+COPY prisma/ /server/prisma
+COPY package.json /server
+RUN npm install
+RUN npx prisma generate
 ```
+**Explanation**
+***FROM*** - tells Docker what image is going to be required to build the container. For this example, its the Node JS (version 18)
+***WORKDIR*** - sets the current working directory for subsequent instructions in the Dockerfile. The `server` directory will be created for this container in Docker's environment
+***COPY*** - separated by a space, this command tells Docker to copy files/folders ***from local environment to the Docker environment***. The code above is saying that all the contents in the src and prisma folders need to be copied to the `/server/src` & `/srver/prisma` folders in Docker, and package.json to be copied to the `server` directory's root.
+***RUN*** - executes commands in the terminal. The commands in the code above will install the necessary node modules, and also generate a prisma client for interacting with the database (it will be needed for seeding the database initially).
 
-## Integrate with your tools
+*`docker-compose.yml`*
+```yml
+server:
+    container_name: server
+    build:
+        context: ./server
+        dockerfile: Dockerfile
+    ports:
+        - "7999:8000"
+    command: bash -c "npx prisma migrate reset --force && npm start"
+    environment:
+        DATABASE_URL: "${DATABASE_URL}"
+        PORT: "${SERVER_PORT}"
+    depends_on:
+        postgres:
+            condition: service_healthy
+```
+**Explanation**
+***build***: defines the build context for the container. This can contain steps to build the container, or contain path to Dockerfiles that have the instructions written. The ***context*** key directs the path, and the ***dockerfile*** key contains the name of the Dockerfile.
+***command***: executes commands according to the instructions that are given. This particular command is executed to first make migrations to the database and seed it, and then start the server.
+***environment***: contains the key-value pairs for the environment, which are available in the .env file at the root directory. `DATABASE_URL` and `PORT` both contain corresponding values in the .env file.
+***depends_on***: checks if the dependent container is up, running and functional or not. This has various properties, but in this example, it is checking if the `service_healthy` flag of our postgres container is up and functional or not. The `server` container will only start if this flag is returned being `true` from the ***healthcheck*** from the PostgreSQL 
 
-- [ ] [Set up project integrations](https://gitlab.com/proyectos2634841/Project-HostingDelSur/-/settings/integrations)
+##### **3. Client**
 
-## Collaborate with your team
+*`Dockerfile`*
+```Dockerfile
+FROM node:18
+ARG VITE_SERVER_URL=http://127.0.0.1:7999
+ENV VITE_SERVER_URL=$VITE_SERVER_URL
+WORKDIR /client
+COPY public/ /client/public
+COPY src/ /client/src
+COPY index.html /client/
+COPY package.json /client/
+COPY vite.config.js /client/
+RUN npm install
+RUN npm run build
+```
+**Explanation**
+Note: *The commands for `client` are very similar to the already explained above for `server`*
+***ARG***: defines a variable that is later passed to the ***ENV*** instruction
+***ENV***: Assigns a key value pair into the context of the Docker environment for the container to run. This essentially contains the domain of the API that will be fired from the client later.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+*`docker-compose.yml`*
+```yml
+client:
+    container_name: client
+    build:
+        context: ./client
+        dockerfile: Dockerfile
+    command: bash -c "npm run preview"
+    ports:
+        - "4172:4173"
+    depends_on:
+        - server
+```
+**Explanation**
+Note: *The commands for `client` are very similar to the already explained above for `server` and `postgres`*
 
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This tutorial provides a basic understanding of using Docker Compose to manage a full-stack application. Explore the code and docker-compose.yml file for further details.

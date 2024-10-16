@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: database
+    environment:
+      POSTGRES_USER: postgres       # Nombre de usuario para PostgreSQL
+      POSTGRES_PASSWORD: admin      # Contraseña para el usuario
+      POSTGRES_DB: hostingDB        # Nombre de la base de datos
+    ports:
+      - "5431:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data  # Volumen para persistir datos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hostingDB"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "7999:8000"
+    command: node src/index.js
+    environment:
+      DATABASE_URL: "postgres://postgres:admin@postgres:5432/hostingDB"
+      PORT: "${SERVER_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    command: bash -c "npm run dev -- --host"
+    ports:
+      - "4173:4173"
+    depends_on:
+      - server
