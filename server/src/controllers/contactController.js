@@ -1,6 +1,5 @@
 const ContactService = require('../services/contactService');
 
-// Controlador para obtener todos los contactos
 async function getAllContacts(req, res) {
     try {
         const contacts = await ContactService.getAllContacts();
@@ -14,8 +13,6 @@ async function getAllContacts(req, res) {
     }
 }
 
-
-// Controlador para obtener un contacto por su ID
 async function getByIdContact(req, res) {
     const contactId = req.params.contactId;
 
@@ -31,7 +28,6 @@ async function getByIdContact(req, res) {
     }
 }
 
-// Controlador para crear un contact
 async function createContact(req, res) {
     try {
 
@@ -41,7 +37,6 @@ async function createContact(req, res) {
             return res.status(400).json({ message: 'Faltan datos obligatorios' });
         }
 
-        // Llama al servicio para crear el contacto
         const newContact = await ContactService.createContact({
             name, phone, email, details, clientid
         });

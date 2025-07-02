@@ -1,9 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-// Cambia 'localhost' por 'postgres', que es el nombre del servicio en docker-compose
-const sequelize = new Sequelize('hostingDB', 'postgres', 'admin', {
-  host: 'postgres',  // Nombre del servicio definido en docker-compose
-  port: '5432',
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   logging: false,
   define: {

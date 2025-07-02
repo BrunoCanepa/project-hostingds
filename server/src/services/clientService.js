@@ -56,6 +56,7 @@ async function getAllClients() {
     });
     return allClients;
   } catch (error) {
+    console.error('Error en getAllClients:', error);
     throw new Error('Error al obtener todos los clientes desde la base de datos');
   }
 }

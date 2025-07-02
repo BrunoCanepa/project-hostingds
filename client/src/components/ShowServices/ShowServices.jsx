@@ -51,7 +51,7 @@ function ShowServices() {
                 const temp = await Promise.all(services.map(async (service) => {
 
                     let contacts = await getContactsByService(service.id);
-                    // Verificar que contacts sea un array, si no, asignar un array vacío
+
                     if (!Array.isArray(contacts)) {
                         contacts = [];
                     }
@@ -68,7 +68,7 @@ function ShowServices() {
                         paymentState: service.paid,
                         isActive: service.active,
                         eliminated: service.eliminated,
-                        contacts: contactNames, // Aquí ahora tienes los contactos resueltos
+                        contacts: contactNames,
                         contactlist: contacts,
                     };
                 }));
@@ -95,7 +95,7 @@ function ShowServices() {
         {
             field: 'serviceType',
             headerName: 'Tipo de servicio',
-            width: 160, // Ajustar el ancho para dar espacio a ambos valores
+            width: 160,
             editable: true,
             renderCell: (params) => (
                 <span>
@@ -169,8 +169,8 @@ function ShowServices() {
                     <Button
                         variant="contained"
                         size="small"
-                        onClick={() => handleActivate(params.id, params.row.eliminated)} // Usa una función de callback
-                        style={{ backgroundColor: 'orange', color: 'white' }} // Opcional: Estilo del botón
+                        onClick={() => handleActivate(params.id, params.row.eliminated)}
+                        style={{ backgroundColor: 'orange', color: 'white' }}
                     >
                         Activar
                     </Button>
@@ -186,8 +186,8 @@ function ShowServices() {
                     <Button
                         variant="contained"
                         size="small"
-                        onClick={() => handlePay(params.id)} // Usa una función de callback
-                        style={{ backgroundColor: 'green', color: 'white' }} // Opcional: Estilo del botón
+                        onClick={() => handlePay(params.id)}
+                        style={{ backgroundColor: 'green', color: 'white' }}
                     >
                         Pagar
                     </Button>
@@ -242,7 +242,7 @@ function ShowServices() {
                                 <GridToolbar
                                     sx={{
                                         '& .MuiButtonBase-root': {
-                                            color: 'black', // Cambia el color del texto de los botones a negro
+                                            color: 'black',
                                         },
                                     }}
                                 />
@@ -255,12 +255,12 @@ function ShowServices() {
                         '& .MuiDataGrid-toolbarContainer': {
                             display: 'flex',
                             justifyContent: 'center',
-                            color: 'black', // Cambia el color del texto de los botones a gris
+                            color: 'black',
                         },
                         '& .MuiDataGrid-footerContainer': {
                             display: 'flex',
                             justifyContent: 'center',
-                            color: 'black', // Cambia el color del texto de los botones a gris
+                            color: 'black',
                         },
                         borderColor: 'white',
                         bgcolor: 'white',

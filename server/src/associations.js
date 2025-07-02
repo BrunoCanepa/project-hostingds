@@ -1,4 +1,3 @@
-// associations.js
 const ClientModel = require('./models/clientModel');
 const ContactModel = require('./models/contactModel');
 const ServiceModel = require('./models/serviceModel');

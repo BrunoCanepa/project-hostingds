@@ -51,15 +51,13 @@ function EditContactButton(client) {
         const selectedContactId = event.target.value;
         setContactId(selectedContactId);
 
-        // Encuentra el contacto seleccionado por ID
         const selectedContact = contacts.find(contact => contact.id === selectedContactId);
 
         if (selectedContact) {
-            // Actualiza los valores de los TextFields con la información del contacto seleccionado
             setName(selectedContact.name);
             setPhone(selectedContact.phone);
             setEmail(selectedContact.email);
-            setDetails(selectedContact.details || ''); // Puede que details sea opcional
+            setDetails(selectedContact.details || '');
         }
     };
 

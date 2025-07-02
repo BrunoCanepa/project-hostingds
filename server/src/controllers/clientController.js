@@ -1,6 +1,5 @@
 const ClientService = require('../services/clientService');
 
-// Controlador para obtener todos los clientes
 async function getAllClients(req, res) {
   try {
     const clients = await ClientService.getAllClients();
@@ -30,7 +29,6 @@ async function getContactByClient(req, res) {
   }
 }
 
-// Controlador para obtener un cliente por su ID
 async function getByIdClient(req, res) {
   const clientId = req.params.clientId;
 
@@ -46,7 +44,6 @@ async function getByIdClient(req, res) {
   }
 }
 
-// Controlador para crear un cliente
 async function createClient(req, res) {
   try {
 
@@ -56,7 +53,6 @@ async function createClient(req, res) {
       return res.status(400).json({ message: 'Faltan datos obligatorios' });
     }
 
-    // Llama al servicio para crear el cliente
     const newClient = await ClientService.createClient({
       name, rut, companyname, details, adress
     });

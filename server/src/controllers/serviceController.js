@@ -1,6 +1,5 @@
 const ServiceService = require('../services/serviceService');
 
-// Controlador para obtener todos los servicios
 async function getAllServices(req, res) {
     try {
         const services = await ServiceService.getAllServices();
@@ -14,7 +13,6 @@ async function getAllServices(req, res) {
     }
 }
 
-//Controlador para obtener los servicios a pagar
 async function getUnpaidServices(req, res) {
     try {
         const services = await ServiceService.getUnpaidServices();
@@ -28,7 +26,6 @@ async function getUnpaidServices(req, res) {
     }
 }
 
-// Controlador para obtener un servicio por su ID
 async function getByIdService(req, res) {
     const serviceId = req.params.serviceId;
 
@@ -44,7 +41,6 @@ async function getByIdService(req, res) {
     }
 }
 
-// Controlador para crear un servicio
 async function createService(req, res) {
     console.log('controller');
     try {
@@ -55,7 +51,6 @@ async function createService(req, res) {
             return res.status(400).json({ message: 'Faltan datos obligatorios' });
         }
 
-        // Llama al servicio para crear el servicio
         const newService = await ServiceService.createService({
             name, price, startdate, enddate, paid, clientid, servicetypeid, payment, active, eliminated
         });

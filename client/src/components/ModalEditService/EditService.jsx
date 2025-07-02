@@ -31,7 +31,6 @@ function EditServiceButton(service) {
 
         if (name && price && enddate) {
 
-            //setOpen(false);
             const body = {
                 "name": name,
                 "price": price,
@@ -40,7 +39,6 @@ function EditServiceButton(service) {
 
             const res = await updateService(service.service.row.id, body);
             console.log(res);
-            //window.location.reload();
         }
     };
 

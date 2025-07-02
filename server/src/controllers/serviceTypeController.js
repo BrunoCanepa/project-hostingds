@@ -1,6 +1,5 @@
 const ServiceTypeService = require('../services/serviceTypeService');
 
-// Controlador para obtener todos los ServiceType
 async function getAllServiceType(req, res) {
     try {
         const serviceType = await ServiceTypeService.getAllServiceType();
@@ -14,24 +13,6 @@ async function getAllServiceType(req, res) {
     }
 }
 
-
-// Controlador para obtener un ServiceType por su ID
-/*async function getByIdServiceType(req, res) {
-    const serviceTypeId = req.params.serviceTypeId;
-
-    try {
-        const serviceType = await ServiceTypeService.getByIdServiceType(serviceTypeId);
-        if (serviceType) {
-            return res.status(200).json(serviceType);
-        } else {
-            return res.status(204).json({ message: 'No hay ServiceType' });
-        }
-    } catch (error) {
-        return res.status(404).json({ message: 'Error al obtener el ServiceType', error: error.message });
-    }
-}*/
-
-// Controlador para crear un ServiceType
 async function createServiceType(req, res) {
     try {
 
@@ -41,7 +22,6 @@ async function createServiceType(req, res) {
             return res.status(400).json({ message: 'Faltan datos obligatorios' });
         }
 
-        // Llama al servicio para crear el ServiceType
         const newServiceType = await ServiceTypeService.createServiceType({
             name, type
         });
@@ -55,7 +35,6 @@ async function createServiceType(req, res) {
 }
 
 module.exports = {
-    //getByIdServiceType,
     getAllServiceType,
     createServiceType,
 };

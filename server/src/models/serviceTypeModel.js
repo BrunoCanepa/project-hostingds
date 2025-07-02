@@ -5,7 +5,6 @@ class ServiceTypeModel extends Model { }
 
 ServiceTypeModel.init(
     {
-        // Atributos de ServiceType (el id lo genera Postgres)
         name: {
             type: DataTypes.STRING,
         },
@@ -19,8 +18,8 @@ ServiceTypeModel.init(
     },
     {
         sequelize,
-        modelName: 'ServiceType', // Nombre del modelo
-        tableName: 'serviceType', // Nombre de la tabla en la base de datos
+        modelName: 'ServiceType',
+        tableName: 'serviceType',
     }
 );
 

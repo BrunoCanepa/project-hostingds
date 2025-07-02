@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:7999';
+const BASE_URL = 'https://backend-app-548983643014.us-central1.run.app';
 
-// Obtener el token desde localStorage
 const getAccessToken = () => localStorage.getItem('accessToken');
 
-// Función para manejar solicitudes GET con respuesta gestionada
 const getBaseAxiosGetWithResponseManage = async (customUrl) => {
     const token = getAccessToken();
     const options = {
@@ -25,7 +23,6 @@ const getBaseAxiosGetWithResponseManage = async (customUrl) => {
     }
 };
 
-// Función para manejar solicitudes POST con respuesta gestionada
 const getBaseAxiosPostWithResponseManage = async (customUrl, body) => {
     const token = getAccessToken();
     const options = {

@@ -24,7 +24,6 @@ function ClientListScreen() {
                 const temp = await Promise.all(clients.map(async (client) => {
 
                     let contacts = await getContactsByClient(client.id);
-                    // Verificar que contacts sea un array, si no, asignar un array vacío
                     if (!Array.isArray(contacts)) {
                         contacts = [];
                     }
@@ -38,7 +37,7 @@ function ClientListScreen() {
                         rut: client.rut,
                         adress: client.adress,
                         details: client.details,
-                        contactNames: contactNames, // Aquí ahora tienes los contactos resueltos
+                        contactNames: contactNames,
                         contactPhones: contactPhones,
                         contactEmails: contactEmails
 
@@ -116,7 +115,7 @@ function ClientListScreen() {
                                 <GridToolbar
                                     sx={{
                                         '& .MuiButtonBase-root': {
-                                            color: 'black', // Cambia el color del texto de los botones a negro
+                                            color: 'black',
                                         },
                                     }}
                                 />
@@ -129,12 +128,12 @@ function ClientListScreen() {
                         '& .MuiDataGrid-toolbarContainer': {
                             display: 'flex',
                             justifyContent: 'center',
-                            color: 'black', // Cambia el color del texto de los botones a gris
+                            color: 'black',
                         },
                         '& .MuiDataGrid-footerContainer': {
                             display: 'flex',
                             justifyContent: 'center',
-                            color: 'black', // Cambia el color del texto de los botones a gris
+                            color: 'black',
                         },
                         borderColor: 'white',
                         bgcolor: 'white',

@@ -5,7 +5,7 @@ const { getAllServices, updateService, getContactByService } = require('./servic
 async function sendMessage(recipientNumber, clientName, daysToPay, serviceType, endDate) {
 
     const url = `https://graph.facebook.com/v20.0/128902603646480/messages`;
-    const token = 'EAAEuoT3df4EBOZBtuGg1iaTrrBtj4IWdrEex04OKTeRZC3f4cD2nP8YnjsBu8vZAZCZABlDHxTNszfkRt6mCrPGZCQUFa9RNKZCHJlSXjs6tIZAyIbXK7zdzPmlMCw5ZAzL7mgJRRi9UkZCzE18XbtMSK1ZAvokyZC22KtsIqxZBYGRDnduOPDJKth8cZAuULHMTCZCbVC8wwZDZD'; // Tu token de acceso
+    const token = 'EAAEuoT3df4EBOZBtuGg1iaTrrBtj4IWdrEex04OKTeRZC3f4cD2nP8YnjsBu8vZAZCZABlDHxTNszfkRt6mCrPGZCQUFa9RNKZCHJlSXjs6tIZAyIbXK7zdzPmlMCw5ZAzL7mgJRRi9UkZCzE18XbtMSK1ZAvokyZC22KtsIqxZBYGRDnduOPDJKth8cZAuULHMTCZCbVC8wwZDZD';
 
     const messageData = {
         messaging_product: 'whatsapp',
@@ -88,7 +88,6 @@ function addOneYear(dateString) {
     const date = new Date(dateString);
     console.log(date);
     console.log(dateString);
-    // Agregar un año a la fecha
     date.setFullYear(date.getFullYear() + 1);
     console.log(date);
 

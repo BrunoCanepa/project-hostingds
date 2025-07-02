@@ -5,7 +5,6 @@ class ClientModel extends Model { }
 
 ClientModel.init(
   {
-    // Atributos de cliente (el id lo genera Postgres)
     name: {
       type: DataTypes.STRING,
     },
@@ -28,8 +27,8 @@ ClientModel.init(
   },
   {
     sequelize,
-    modelName: 'Client', // Nombre del modelo
-    tableName: 'client', // Nombre de la tabla en la base de datos
+    modelName: 'Client',
+    tableName: 'client',
   }
 );
 
@@ -38,9 +37,3 @@ module.exports = ClientModel;
 
 
 
-/*•	Razón social
-•	Rut
-•	Direccion
-•	Detalles “Descripcion” -Opcional
-•	Contacto
-*/

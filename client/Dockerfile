@@ -5,6 +5,9 @@ FROM node:18
 ARG VITE_SERVER_URL=http://127.0.0.1:7999
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
 
+# Vite usará este puerto para `npm run preview`
+ENV PORT=8080
+
 # Crear el directorio de trabajo en el contenedor
 WORKDIR /app
 
@@ -22,7 +25,7 @@ COPY . /app
 RUN npm run build
 
 # Exponer el puerto en el que correrá la aplicación
-EXPOSE 5173
+EXPOSE 8080
 
 # Comando para ejecutar la aplicación en modo preview
-CMD ["npm", "run", "preview", "--", "--host"]
+CMD ["npm", "run", "preview", "--", "--host", "--port", "8080"]
